@@ -2,6 +2,9 @@ package com.colak.springtutorial.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DocumentController {
 
-    private final ChatClient aiClient;
+    private final ChatClient chatClient;
     private final VectorStore vectorStore;
 
 
@@ -39,11 +42,14 @@ public class DocumentController {
     }
 
     private String getAIResponse(String query, String response) {
-        var systemPrompt = new SystemPromptTemplate(response);
-        var userPrompt = new PromptTemplate(query);
+        SystemPromptTemplate systemPrompt = new SystemPromptTemplate(response);
+        PromptTemplate userPrompt = new PromptTemplate(query);
 
-        var prompt = new Prompt(List.of(systemPrompt.createMessage(), userPrompt.createMessage()));
+        Prompt prompt = new Prompt(List.of(systemPrompt.createMessage(), userPrompt.createMessage()));
 
-        return aiClient.call(prompt).getResult().getOutput().getContent();
+        ChatResponse chatResponse = chatClient.call(prompt);
+        Generation chatResponseResult = chatResponse.getResult();
+        AssistantMessage assistantMessage = chatResponseResult.getOutput();
+        return assistantMessage.getContent();
     }
 }
