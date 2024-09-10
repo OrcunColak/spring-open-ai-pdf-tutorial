@@ -41,6 +41,7 @@ public class DocumentController {
         return ResponseEntity.ok(getAIResponse(query, response));
     }
 
+    // OpenAI Chat Mode: The application backend leverages the OpenAI Chat Completion API
     private String getAIResponse(String query, String response) {
         SystemPromptTemplate systemPrompt = new SystemPromptTemplate(response);
         PromptTemplate userPrompt = new PromptTemplate(query);
@@ -50,6 +51,7 @@ public class DocumentController {
         ChatResponse chatResponse = chatClient.call(prompt);
         Generation chatResponseResult = chatResponse.getResult();
         AssistantMessage assistantMessage = chatResponseResult.getOutput();
+        // Content is raw Json
         return assistantMessage.getContent();
     }
 }
