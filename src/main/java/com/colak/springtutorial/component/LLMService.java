@@ -47,12 +47,15 @@ public class LLMService {
 
     // OpenAI Chat Mode: The application backend leverages the OpenAI Chat Completion API
     private String getAIResponse(Prompt prompt) {
-        ChatClient.ChatClientPromptRequest promptRequest = chatClient.prompt(prompt);
-        ChatResponse chatResponse = promptRequest.call().chatResponse();
+        ChatResponse chatResponse = call(prompt);
 
         Generation chatResponseResult = chatResponse.getResult();
         AssistantMessage assistantMessage = chatResponseResult.getOutput();
         // Content is raw Json
         return assistantMessage.getContent();
+    }
+
+    private ChatResponse call(Prompt prompt) {
+        return chatClient.prompt(prompt).call().chatResponse();
     }
 }
